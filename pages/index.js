@@ -78,6 +78,7 @@ export default function orders() {
                   <Link
                     href={`https://oms.chaordic.com.br/deliveries/${orders.orderId}?channel=${orders.channelId}&fid=F1`}
                     target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <span>
                       <strong>Link do Pedido</strong>
