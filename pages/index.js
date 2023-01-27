@@ -14,7 +14,6 @@ export default function orders() {
 
   const apiCall = (event) => {
     const url = `https://production-order.omniplat.io/v1/clients/${orderUser}/fulfillments/locations/190410/status/WAITING?page=1`;
-    setError(null);
 
     fetch(url, {
       headers: new Headers({
@@ -24,6 +23,7 @@ export default function orders() {
     })
       .then((response) => {
         if (response.status === 200) {
+          setError(null);
           return response.json();
         } else {
           throw new Error("Dados Incorretos");
@@ -63,11 +63,16 @@ export default function orders() {
               differenceInDays(new Date(), new Date(orders.createdAt)) > 5;
             return (
               <li key={orders.orderId}>
-                <span>Pedido: {orders.orderId}</span>
+                <span>
+                  Pedido: <strong> {orders.orderId}</strong>
+                </span>
                 <br />
                 <span>
                   Dias Nesse Status:{" "}
-                  {differenceInDays(new Date(), new Date(orders.createdAt))}
+                  <strong>
+                    {" "}
+                    {differenceInDays(new Date(), new Date(orders.createdAt))}
+                  </strong>
                 </span>
                 {"  "}-
                 {isOutdated && (
@@ -85,9 +90,15 @@ export default function orders() {
                   </strong>
                   <br />
                 </span>
-                LocationId: <span>{orders.locationId}</span>
+                LocationId:{" "}
+                <span>
+                  <strong> {orders.locationId}</strong>
+                </span>
                 <br />
-                Canal: <span>{orders.channelId}</span>
+                Canal:{" "}
+                <span>
+                  <strong> {orders.channelId}</strong>
+                </span>
                 <br />
                 <Link
                   href={`https://oms.chaordic.com.br/deliveries/${orders.orderId}?channel=${orders.channelId}&fid=F1`}
