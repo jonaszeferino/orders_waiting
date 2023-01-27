@@ -87,9 +87,12 @@ export default function orders() {
                 <br />
                 <span>
                   Data do Pedido:
-                  {orders.createdAt.length > 0
-                    ? format(new Date(orders.createdAt), " dd/MM/yyyy")
-                    : ""}
+                  <strong>
+                    {" "}
+                    {orders.createdAt.length > 0
+                      ? format(new Date(orders.createdAt), " dd/MM/yyyy")
+                      : ""}
+                  </strong>
                 </span>
                 <br />
                 LocationId:
