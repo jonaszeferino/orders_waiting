@@ -63,43 +63,40 @@ export default function orders() {
               differenceInDays(new Date(), new Date(orders.createdAt)) > 5;
             return (
               <li key={orders.orderId}>
-                <span>
-                  Pedido:
-                  {orders.orderId}
-                </span>
+                <span>Pedido: {orders.orderId}</span>
                 <br />
+                <span>
+                  Dias Nesse Status:{" "}
+                  {differenceInDays(new Date(), new Date(orders.createdAt))}
+                </span>
+                {"  "}-
                 {isOutdated && (
-                  <span style={{ color: "red" }}>
+                  <span style={{ color: "red", font: "bold" }}>
                     Pedido parado a mais de 5 dias
                   </span>
                 )}
                 <br />
                 <Link
                   href={`https://oms.chaordic.com.br/deliveries/${orders.orderId}?channel=${orders.channelId}&fid=F1`}
+                  as="a"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <span>
-                    <strong>Link do Pedido</strong>
-                  </span>
+                  <strong>Link Do Pedido</strong>
                 </Link>
                 <br />
                 <span>
                   Data do Pedido:
                   <strong>
-                    {" "}
                     {orders.createdAt.length > 0
                       ? format(new Date(orders.createdAt), " dd/MM/yyyy")
                       : ""}
                   </strong>
+                  <br />
                 </span>
+                LocationId: <span>{orders.locationId}</span>
                 <br />
-                LocationId:
-                <span>{orders.locationId}</span>
-                <br />
-                Canal:
-                <span>{orders.channelId}</span>
-                <br />
+                Canal: <span>{orders.channelId}</span>
                 <br />
                 <br />
               </li>
