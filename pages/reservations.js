@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "../styles/Home.module.css";
 import ErrorPage from "./error-page";
-import { format } from "date-fns";
+import { format, differenceInDays } from "date-fns";
 
 export default function Reservations() {
   let [reservationStock, setReservationStock] = useState([]);
@@ -45,16 +45,6 @@ export default function Reservations() {
             onChange={(event) => setReservationUser(event.target.value)}
           ></input>
         </label>
-        {/* <label type="text">
-          Basic:
-          <input
-            className={styles.card}
-            required={true}
-            type="text"
-            value={reservationBasic}
-            onChange={(event) => setReservationBasic(event.target.value)}
-          ></input>
-        </label> */}
         <button className={styles.card} onClick={apiCall}>
           Verificar
         </button>
@@ -66,21 +56,42 @@ export default function Reservations() {
         <ErrorPage message={`Verifique as Credenciais`}></ErrorPage>
       ) : (
         <div className={styles.grid}>
-          {reservationStock.map((reserve) => (
-            <div className={styles.card} key={reserve.id}>
-              <span>Cliente: {reserve.clientId}</span> <br />
-              <span>Canal: {reserve.channelId}</span> <br />
-              <span>Location: {reserve.locationId}</span> <br />
-              <span>Sku: {reserve.skuId}</span> <br />
-              <span>Pedido: {reserve.orderId}</span> <br />
-              <span>Quantidade: {reserve.quantity}</span> <br />
-              <span>
-                Data:{" "}
-                {format(new Date(reserve.createdAt), "dd/MM/yyyy HH:mm:ss")}
-              </span>
-              <br />
-            </div>
-          ))}
+          {reservationStock.map((reserve) => {
+            const isOutdated =
+              differenceInDays(new Date(), new Date(reserve.createdAt)) > 10;
+            return (
+              <div className={styles.card} key={reserve.id}>
+                <span>Cliente: {reserve.clientId}</span> <br />
+                <span>Canal: {reserve.channelId}</span> <br />
+                <span>Location: {reserve.locationId}</span> <br />
+                <span>Sku: {reserve.skuId}</span> <br />
+                <span>Pedido: {reserve.orderId}</span> <br />
+                <span>Quantidade: {reserve.quantity}</span> <br />
+                <span>
+                  Data:{" "}
+                  {format(new Date(reserve.createdAt), "dd/MM/yyyy HH:mm:ss")}
+                </span>
+                <br />
+                <span>
+                  Dias Nesse Status:{" "}
+                  <strong>
+                    {" "}
+                    {differenceInDays(new Date(), new Date(reserve.createdAt))}
+                  </strong>
+                </span>
+                {"  "}-
+                {isOutdated && (
+                  <span style={{ color: "red", font: "bold" }}>
+                    {`Reserva parada a ${differenceInDays(
+                      new Date(),
+                      new Date(reserve.createdAt)
+                    )} dias`}
+                  </span>
+                )}
+                <br />
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
