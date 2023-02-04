@@ -121,7 +121,7 @@ export default function orders() {
                       {differenceInDays(new Date(), new Date(orders.createdAt))}
                     </strong>
                   </span>
-                  {"  "}-
+                  {"  "}-{" "}
                   {isOutdated && (
                     <span style={{ color: "red", font: "bold" }}>
                       Pedido parado a mais de 5 dias
