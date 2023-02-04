@@ -61,7 +61,7 @@ export default function orders() {
           setTotalResults(result.total)
         )
       )
-      .catch((error) => setError(true));
+      .catch((error) => setError(true), setIsLoading(false));
   };
 
   return (
