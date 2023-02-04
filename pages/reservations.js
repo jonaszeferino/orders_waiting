@@ -9,9 +9,12 @@ export default function Reservations() {
   let [reservationBasic, setReservationBasic] = useState();
   let [isError, setError] = useState(false);
 
+  let [isLoading, setIsLoading] = useState(false);
+
   const apiCall = (event) => {
     const url = `https://hub.omniplat.io/v1/clients/${reservationUser}/reservations/unfinished`;
     let authorizationValue;
+    setIsLoading(true);
 
     switch (reservationUser) {
       case "lepostiche":
@@ -44,8 +47,8 @@ export default function Reservations() {
           throw new Error("Dados Incorretos");
         }
       })
-      .then((result) => setReservationStock(result))
-      .catch((error) => setError(true));
+      .then((result) => setReservationStock(result), setIsLoading(false))
+      .catch((error) => setError(true), setIsLoading(false));
   };
 
   return (
@@ -69,7 +72,9 @@ export default function Reservations() {
         </button>
       </h2>
 
-      {/* If ternário abaixo, dentro do HTML única forma de fazer */}
+      <span>{isLoading ? <div>Carregando...</div> : " "}</span>
+
+      <br />
 
       {isError === true ? (
         <ErrorPage message={`~Confira o Texto`}></ErrorPage>

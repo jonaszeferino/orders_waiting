@@ -109,7 +109,7 @@ export default function orders() {
                 differenceInDays(new Date(), new Date(orders.createdAt)) > 5;
 
               return (
-                <li key={orders.orderId}>
+                <div className={styles.card} key={orders.orderId}>
                   <span>
                     Pedido: <strong> {orders.orderId}</strong>
                   </span>
@@ -157,7 +157,7 @@ export default function orders() {
                   </a>
                   <br />
                   <br />
-                </li>
+                </div>
               );
             })}
         </ul>
