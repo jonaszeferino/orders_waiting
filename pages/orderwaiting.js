@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import React from "react";
+import ErrorPage from "./error-page";
 import styles from "../styles/Home.module.css";
 import { format, differenceInDays } from "date-fns";
 import Link from "next/link";
@@ -9,27 +10,57 @@ import Link from "next/link";
 export default function orders() {
   let [orderStock, setOrderStock] = useState([]);
   let [orderUser, setOrderUser] = useState();
-  let [error, setError] = useState(null);
-  let [dayNumber, setDaysNumber] = useState(null);
+  let [orderLocation, setOrderLocationId] = useState();
+  let [isError, setError] = useState(null);
+  let [totalResults, setTotalResults] = useState();
+
+  let [isLoading, setIsLoading] = useState(false);
 
   const apiCall = (event) => {
-    const url = `https://production-order.omniplat.io/v1/clients/${orderUser}/fulfillments/locations/190410/status/WAITING?page=1`;
+    const url = `https://production-order.omniplat.io/v1/clients/${orderUser}/fulfillments/locations/${orderLocation}/status/WAITING?page=1`;
+    let authorizationValue;
+    setIsLoading(true);
+
+    switch (orderUser) {
+      case "lepostiche":
+        authorizationValue = process.env.NEXT_PUBLIC_LEPOSTICHE;
+        break;
+      case "lebes":
+        authorizationValue = process.env.NEXT_PUBLIC_LEBES;
+        break;
+      case "viaveneto":
+        authorizationValue = process.env.NEXT_PUBLIC_VIA;
+        break;
+      case "vago":
+        authorizationValue = process.env.NEXT_PUBLIC_LEBES;
+        break;
+      default:
+        authorizationValue = process.env.NEXT_PUBLIC_LEBES;
+    }
+
+    console.log("verificara URL:" + url);
 
     fetch(url, {
       headers: new Headers({
-        Authorization: process.env.NEXT_PUBLIC_LE_AUTH,
+        Authorization: authorizationValue,
         "Content-Type": "application/json",
       }),
     })
       .then((response) => {
         if (response.status === 200) {
-          setError(null);
+          setError(false);
           return response.json();
         } else {
           throw new Error("Dados Incorretos");
         }
       })
-      .then((result) => setOrderStock(result))
+      .then(
+        (result) => (
+          setOrderStock(result),
+          setIsLoading(false),
+          setTotalResults(result.total)
+        )
+      )
       .catch((error) => setError(true));
   };
 
@@ -48,72 +79,94 @@ export default function orders() {
             onChange={(event) => setOrderUser(event.target.value)}
           ></input>
         </label>
+        <label type="text">
+          LocationID:
+          <input
+            className={styles.card}
+            required={true}
+            type="text"
+            value={orderLocation}
+            onChange={(event) => setOrderLocationId(event.target.value)}
+          ></input>
+        </label>
 
         <button className={styles.card} onClick={apiCall}>
           Verificar
         </button>
       </h2>
 
-      <ul>
-        {orderStock &&
-          orderStock.data &&
-          orderStock.data.length > 0 &&
-          orderStock.data.map((orders) => {
-            const isOutdated =
-              differenceInDays(new Date(), new Date(orders.createdAt)) > 5;
-            return (
-              <li key={orders.orderId}>
-                <span>
-                  Pedido: <strong> {orders.orderId}</strong>
-                </span>
-                <br />
-                <span>
-                  Dias Nesse Status:{" "}
-                  <strong>
-                    {" "}
-                    {differenceInDays(new Date(), new Date(orders.createdAt))}
-                  </strong>
-                </span>
-                {"  "}-
-                {isOutdated && (
-                  <span style={{ color: "red", font: "bold" }}>
-                    Pedido parado a mais de 5 dias
+      <span>{isLoading ? <div>Carregando...</div> : " "}</span>
+
+      {isError === true ? (
+        <ErrorPage message={`Verifique as Credenciais`}></ErrorPage>
+      ) : (
+        <ul>
+          {orderStock &&
+            orderStock.data &&
+            orderStock.data.length > 0 &&
+            orderStock.data.map((orders) => {
+              const isOutdated =
+                differenceInDays(new Date(), new Date(orders.createdAt)) > 5;
+
+              return (
+                <li key={orders.orderId}>
+                  <span>
+                    Pedido: <strong> {orders.orderId}</strong>
                   </span>
-                )}
-                <br />
-                <span>
-                  Data do Pedido:
-                  <strong>
-                    {orders.createdAt.length > 0
-                      ? format(new Date(orders.createdAt), " dd/MM/yyyy")
-                      : ""}
-                  </strong>
                   <br />
-                </span>
-                LocationId:{" "}
-                <span>
-                  <strong> {orders.locationId}</strong>
-                </span>
-                <br />
-                Canal:{" "}
-                <span>
-                  <strong> {orders.channelId}</strong>
-                </span>
-                <br />
-                <a
-                  href={`https://oms.chaordic.com.br/deliveries/${orders.orderId}?channel=${orders.channelId}&fid=F1`}
-                  as="a"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <strong>Link Do Pedido</strong>
-                </a>
-                <br />
-                <br />
-              </li>
-            );
-          })}
-      </ul>
+                  <span>
+                    Dias Nesse Status:{" "}
+                    <strong>
+                      {" "}
+                      {differenceInDays(new Date(), new Date(orders.createdAt))}
+                    </strong>
+                  </span>
+                  {"  "}-
+                  {isOutdated && (
+                    <span style={{ color: "red", font: "bold" }}>
+                      Pedido parado a mais de 5 dias
+                    </span>
+                  )}
+                  <br />
+                  <span>
+                    Data do Pedido:
+                    <strong>
+                      {orders.createdAt.length > 0
+                        ? format(new Date(orders.createdAt), " dd/MM/yyyy")
+                        : ""}
+                    </strong>
+                    <br />
+                  </span>
+                  LocationId:{" "}
+                  <span>
+                    <strong> {orders.locationId}</strong>
+                  </span>
+                  <br />
+                  Canal:{" "}
+                  <span>
+                    <strong> {orders.channelId}</strong>
+                  </span>
+                  <br />
+                  <a
+                    href={`https://oms.chaordic.com.br/deliveries/${orders.orderId}?channel=${orders.channelId}&fid=F1`}
+                    as="a"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <strong>Link Do Pedido</strong>
+                  </a>
+                  <br />
+                  <br />
+                </li>
+              );
+            })}
+        </ul>
+      )}
+
+      <span>
+        Total de Resultados:
+        <strong> {totalResults}</strong>
+      </span>
     </div>
   );
 }

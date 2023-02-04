@@ -11,14 +11,33 @@ export default function Reservations() {
 
   const apiCall = (event) => {
     const url = `https://hub.omniplat.io/v1/clients/${reservationUser}/reservations/unfinished`;
+    let authorizationValue;
+
+    switch (reservationUser) {
+      case "lepostiche":
+        authorizationValue = process.env.NEXT_PUBLIC_LEPOSTICHE;
+        break;
+      case "lebes":
+        authorizationValue = process.env.NEXT_PUBLIC_LEBES;
+        break;
+      case "viaveneto":
+        authorizationValue = process.env.NEXT_PUBLIC_VIA;
+        break;
+      case "vago":
+        authorizationValue = process.env.NEXT_PUBLIC_LEBES;
+        break;
+      default:
+        authorizationValue = process.env.NEXT_PUBLIC_LEBES;
+    }
 
     fetch(url, {
       headers: new Headers({
-        Authorization: process.env.NEXT_PUBLIC_LE_AUTH,
+        Authorization: authorizationValue,
         "Content-Type": "application/json",
       }),
     })
       .then((response) => {
+        setError(false);
         if (response.status === 200) {
           return response.json();
         } else {
@@ -31,7 +50,7 @@ export default function Reservations() {
 
   return (
     <div>
-      <h3 className={styles.title}>Minhas Reservas</h3>
+      <h3 className={styles.title}>Reservas Não Finalizadas</h3>
       <h2 className={styles.grid}>
         {" "}
         <br />
@@ -53,7 +72,7 @@ export default function Reservations() {
       {/* If ternário abaixo, dentro do HTML única forma de fazer */}
 
       {isError === true ? (
-        <ErrorPage message={`Verifique as Credenciais`}></ErrorPage>
+        <ErrorPage message={`~Confira o Texto`}></ErrorPage>
       ) : (
         <div className={styles.grid}>
           {reservationStock.map((reserve) => {
