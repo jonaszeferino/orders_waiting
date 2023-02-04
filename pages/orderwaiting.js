@@ -98,7 +98,7 @@ export default function orders() {
       <span>{isLoading ? <div>Carregando...</div> : " "}</span>
 
       {isError === true ? (
-        <ErrorPage message={`Verifique as Credenciais`}></ErrorPage>
+        <ErrorPage message={`Verifique a grafia`}></ErrorPage>
       ) : (
         <ul>
           {orderStock &&
