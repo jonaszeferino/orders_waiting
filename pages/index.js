@@ -18,6 +18,10 @@ export default function Home() {
         <a>Reservas Em Aberto</a>
       </Link>
       <br />
+      <Link href="/quotation">
+        <a>Verificar Cotação</a>
+      </Link>
+      <br />
     </div>
   );
 }

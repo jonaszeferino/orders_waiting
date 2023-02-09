@@ -20,6 +20,11 @@ export default function navbar() {
           <a>Reservas</a>
         </Link>
       </li>
+      <li>
+        <Link href="/quotation">
+          <a>Cotação</a>
+        </Link>
+      </li>
     </ul>
   );
 }
