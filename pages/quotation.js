@@ -25,9 +25,11 @@ export default function Quotation() {
 
   let [volumeQuotation, setVolumeQuotation] = useState(0);
   let [gris, setGris] = useState(0);
-  let [icmsS, setIcms] = useState(0);
+  let [icmsS, setIcmsS] = useState(0);
 
   const apiCall = (event) => {
+
+    //Cálculo 1
     const volume =
       (skuQuotationHeight / 1000) *
       (skuQuotationWidth / 1000) *
@@ -47,8 +49,11 @@ export default function Quotation() {
 
     setVolumeQuotation(volume);
     setSkuQuotationVol(better);
+  };
 
-    const grisAdvaloren =
+    // Cálculo 2 
+
+     const grisAdvaloren = (event) =>{
       (skuQuotationPrice *
         (skuQuotationRowGrisValue + skuQuotationRowAdValorenValue)) /
         100 +
@@ -56,11 +61,24 @@ export default function Quotation() {
       skuQuotationFactor;
 
     setGris(grisAdvaloren);
+      };
+    // Cálculo 3
 
-    const icms = skuQuotationRowShhipingCost / (1 - skuQuotationIcms / 100);
-
-    setIcms(icms);
+    const icms = (event) => {
+      const calculatedIcms = (skuQuotationRowShhipingCost + gris) / (1 - skuQuotationIcms / 100);
+      setIcmsS(calculatedIcms);
+    };
+    console.log(
+      "frete: " +
+        skuQuotationRowShhipingCost +
+        " " +
+        gris +
+        " " +
+        "valor calculado" +
+        icmsS
+    );
   };
+
 
   return (
     <div>
@@ -185,13 +203,27 @@ export default function Quotation() {
         ></input>
       </label>
       <br />
+      <h3>Cálculo do ICMS</h3>
+      <label type="text">
+        Percentual de ICMS
+        <input
+          className={styles.card}
+          required={true}
+          type="number"
+          value={skuQuotationIcms}
+          onChange={(event) => setSkuQuotationIcms(event.target.value)}
+        ></input>
+      </label>
+      <br />
+      <span>Valor calculado do icms: {icmsS}</span>
+      <br />
       <button className={styles.card} onClick={apiCall}>
         Verificar
       </button>
       <div>
         <span>total:{skuQuotationTotal} </span> <br />
         <span>volume:{volumeQuotation.toFixed(2) + " kg"} </span> <br />
-        <span>gris:{gris} </span> <br />
+        {/* <span>gris:{grisAdvaloren} </span> <br /> */}
         <span>imcs:{icmsS} </span> <br />
       </div>
     </div>
