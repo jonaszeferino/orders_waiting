@@ -11,7 +11,19 @@ const Quotation = () => {
   const [skuQuotationVolumeCalculeted, setSkuQuotationVolumeCalculeted] =
     useState(0);
   const [skuQuotationBetter, setSkuQuotationBetter] = useState();
-  //fundamentais para o segundo calculo:
+
+  // fundamentais para o segundo cálculo
+  const [skuQuotationDimensionFactor, setSkuQuotationDimensionFactor] =
+    useState(0);
+  const [skuQuotationMaxWeight, setSkuQuotationMaxWeight] = useState(10);
+  const [skuQuotationOverweightFactor, setSkuQuotationOverweightFactor] =
+    useState(0);
+  const [
+    skuQuotationGrisFactorCalculated,
+    setSkuQuotationGrisFactorCalculated,
+  ] = useState(0);
+
+  //fundamentais para o terceiro calculo:
   const [skuQuotationGris, setSkuQuotationGris] = useState(0);
   const [skuQuotationPrice, setSkuQuotationPrice] = useState(259);
   const [skuGrisCalculated, setSkuGrisCalculated] = useState(0);
@@ -19,7 +31,7 @@ const Quotation = () => {
   const [skuQuotationRowAdValorenValue, setSkuQuotationRowAdValorenValue] =
     useState(0);
   const [skuQuotationRowShhipingCost, setSkuQuotationRowShhipingCost] =
-    useState(14);
+    useState(14.43);
   //erros state
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -50,28 +62,32 @@ const Quotation = () => {
   };
 
   const calculosTwo = () => {
-    let grisCalculos =
-      (skuQuotationPrice *
-        (skuQuotationRowGrisValue + skuQuotationRowAdValorenValue)) /
-        100 +
-      skuQuotationRowShhipingCost +
-      skuQuotationFactor;
+    let grisFactor =
+      (skuQuotationDimensionFactor * skuQuotationVolumeCalculeted -
+        skuQuotationMaxWeight) *
+      skuQuotationOverweightFactor;
 
-    let grisFloat =
-      typeof grisCalculos === "number" ? grisCalculos.toFixed(2) : grisCalculos;
-    setSkuGrisCalculated(grisFloat);
-
-    console.log(
-      "Pq essa bost nao ta como numero?  " +
-        skuQuotationRowShhipingCost +
-        " total: " +
-        grisFloat
-    );
+    setSkuQuotationGrisFactorCalculated(grisFactor);
 
     return;
   };
 
   const calculosThree = () => {
+    let grisCalculos =
+      (skuQuotationPrice *
+        (skuQuotationRowGrisValue + skuQuotationRowAdValorenValue)) /
+        100 +
+      (skuQuotationRowShhipingCost + skuQuotationGrisFactorCalculated);
+    setSkuGrisCalculated(grisCalculos);
+
+    return;
+  };
+
+  const calculosFour = () => {
+    // implementation for handling width calculation
+  };
+
+  const calculosFive = () => {
     // implementation for handling width calculation
   };
 
@@ -89,31 +105,43 @@ const Quotation = () => {
     setSkuQuotationRowAdValorenValue(0);
     setSkuQuotationRowShhipingCost(0);
     setErrorMessage(0);
+    serSkuQuotationDimensionFactor(0);
+    setSkuQuotationMaxWeight(0);
+    setSkuQuotationOverweightFactor(0);
+    setSkuQuotationGrisFactorCalculated(0);
   };
 
   return (
     <div>
+      <h3>
+        Demonstração dos Cálculos da Cotação no OMS - Divido em 5 Partes -
+      </h3>
+      <h4>
+        {" "}
+        1 Cálculo do Volume / 2 Cálculo do grisFactor / 3 Cálculo do
+        grisAdValoren / 4 IMCS / 5 Cálculo Total{" "}
+      </h4>
+      <hr />
+      <h2>Parte 1 - Cálculo do Volume</h2>
+      <hr />
       <h3>Dimensões do Produto:</h3>
       <label type="text">
         Peso em kg
         <input
-          placeholder={"0.5"}
+          placeholder={"10"}
           className={styles.card}
           required={true}
           type="number"
           value={skuQuotationWeight}
           onChange={(event) => {
-            if (!isNaN(event.target.value)) {
-              setSkuQuotationWeight(event.target.value);
+            if (!isNaN(parseFloat(event.target.value))) {
+              setSkuQuotationWeight(parseFloat(event.target.value));
               setErrorMessage("");
             } else {
               setErrorMessage("O valor digitado não é um número válido.");
             }
           }}
         />
-        {errorMessage && (
-          <div className={styles.errorMessage}>{errorMessage}</div>
-        )}
       </label>
       <label type="text">
         Altura em cm
@@ -123,7 +151,14 @@ const Quotation = () => {
           required={true}
           type="number"
           value={skuQuotationHeight}
-          onChange={(event) => setSkuQuotationHeight(event.target.value)}
+          onChange={(event) => {
+            if (!isNaN(parseFloat(event.target.value))) {
+              setSkuQuotationHeight(parseFloat(event.target.value));
+              setErrorMessage("");
+            } else {
+              setErrorMessage("O valor digitado não é um número válido.");
+            }
+          }}
         />
       </label>
       <label type="text">
@@ -134,7 +169,14 @@ const Quotation = () => {
           required={true}
           type="number"
           value={skuQuotationWidth}
-          onChange={(event) => setSkuQuotationWidth(event.target.value)}
+          onChange={(event) => {
+            if (!isNaN(parseFloat(event.target.value))) {
+              setSkuQuotationWidth(parseFloat(event.target.value));
+              setErrorMessage("");
+            } else {
+              setErrorMessage("O valor digitado não é um número válido.");
+            }
+          }}
         />
       </label>
       <label type="text">
@@ -145,11 +187,17 @@ const Quotation = () => {
           required={true}
           type="number"
           value={skuQuotationLength}
-          onChange={(event) => setSkuQuotationLength(event.target.value)}
+          onChange={(event) => {
+            if (!isNaN(parseFloat(event.target.value))) {
+              setSkuQuotationLength(parseFloat(event.target.value));
+              setErrorMessage("");
+            } else {
+              setErrorMessage("O valor digitado não é um número válido.");
+            }
+          }}
         />
       </label>
       <br />
-
       <label type="text">
         Fator de Cubagem
         <input
@@ -158,86 +206,208 @@ const Quotation = () => {
           required={true}
           type="number"
           value={skuQuotationFactor}
-          onChange={(event) => setSkuQuotationFactor(event.target.value)}
+          onChange={(event) => {
+            if (!isNaN(parseFloat(event.target.value))) {
+              setSkuQuotationFactor(parseFloat(event.target.value));
+              setErrorMessage("");
+            } else {
+              setErrorMessage("O valor digitado não é um número válido.");
+            }
+          }}
         />
       </label>
-
+      <h3>Cálculo do Volume</h3>
       <div>
-        <h3>Qual o volume calculado:</h3>
-        <span>Volume: {skuQuotationVolumeCalculeted.toFixed(2)} kg </span>
-        <h3>Como foi feito o Cálculo:</h3>
-        {skuQuotationBetter}
-        <h3>
-          Agora para verificar o calculo do Gris, pegue os seguintes dados:
-        </h3>
-        <span>bla bla bla</span> <br />
         <span>
-          <label type="text">
-            Preço de venda do SKU
-            <input
-              className={styles.card}
-              required={true}
-              type="number"
-              value={skuQuotationPrice}
-              onChange={(event) => setSkuQuotationPrice(event.target.value)}
-            />
-          </label>
-          <label type="text">
-            Constante do Gris
-            <input
-              className={styles.card}
-              required={true}
-              type="number"
-              value={skuQuotationRowGrisValue}
-              onChange={(event) =>
-                setSkuQuotationRowGrisValue(event.target.value)
-              }
-            />
-          </label>
-          <label type="text">
-            Constante do AdValoren
-            <input
-              className={styles.card}
-              required={true}
-              type="number"
-              value={skuQuotationRowAdValorenValue}
-              onChange={(event) =>
-                setSkuQuotationRowAdValorenValue(event.target.value)
-              }
-            />
-          </label>
-          <br />
-          <span>
-            No valor a seguire, verifique no OMS a tabela de frete na faixa de
-            peso de: <strong>{skuQuotationVolumeCalculeted.toFixed(2)}</strong>{" "}
-            kg.
-          </span>
-          <br />
-          <label type="text">
-            Valor da faixa de peso na tabela de frete:
-            <input
-              className={styles.card}
-              required={true}
-              type="number"
-              value={skuQuotationRowShhipingCost}
-              onChange={(event) =>
-                setSkuQuotationRowShhipingCost(event.target.value)
-              }
-            />
-          </label>
-          <br />
+          Volume = ( {skuQuotationHeight} / 1000) * ({skuQuotationWidth} / 1000)
+          * ({skuQuotationLength} / 1000) * {skuQuotationFactor};<br /> Volume ={" "}
+          {skuQuotationVolumeCalculeted}
         </span>
-        <span>Valor calculado do Gris foi: {skuGrisCalculated} </span>
+        <br />
+        <span>
+          Volume/Peso Cúbico {skuQuotationVolumeCalculeted.toFixed(2)} kg{" "}
+        </span>
       </div>
-
+      <div>
+        <h3>Qual usar? Volume ou Peso Real.</h3>
+        {skuQuotationBetter}
+        <br />
+        <span>***regra padrão do OMS***</span>
+        <br />
+        <hr />
+        <h2> Parte 2 - Cálculo do grisFactor</h2>
+        <hr />
+        <label type="text">
+          Dimension Factor
+          <input
+            className={styles.card}
+            required={true}
+            type="number"
+            value={skuQuotationDimensionFactor}
+            onChange={(event) => {
+              if (!isNaN(parseFloat(event.target.value))) {
+                setSkuQuotationDimensionFactor(parseFloat(event.target.value));
+                setErrorMessage("");
+              } else {
+                setErrorMessage("O valor digitado não é um número válido.");
+              }
+            }}
+          />
+        </label>
+        <label type="text">
+          Peso Máximo
+          <input
+            className={styles.card}
+            required={true}
+            type="number"
+            value={skuQuotationMaxWeight}
+            onChange={(event) => {
+              if (!isNaN(parseFloat(event.target.value))) {
+                setSkuQuotationMaxWeight(parseFloat(event.target.value));
+                setErrorMessage("");
+              } else {
+                setErrorMessage("O valor digitado não é um número válido.");
+              }
+            }}
+          />
+        </label>
+        <label type="text">
+          Sobre Peso Factor
+          <input
+            className={styles.card}
+            required={true}
+            type="number"
+            value={skuQuotationOverweightFactor}
+            onChange={(event) => {
+              if (!isNaN(parseFloat(event.target.value))) {
+                setSkuQuotationOverweightFactor(parseFloat(event.target.value));
+                setErrorMessage("");
+              } else {
+                setErrorMessage("O valor digitado não é um número válido.");
+              }
+            }}
+          />
+        </label>
+        <br />
+        <span></span> <br />
+        <h3>Cálculo do grisFactor</h3>
+        <div>
+          <span>
+            grisFactor = ({skuQuotationDimensionFactor} *{" "}
+            {skuQuotationVolumeCalculeted} - {skuQuotationMaxWeight}) *{" "}
+            {skuQuotationOverweightFactor}; <br /> grisFactor =
+            {skuQuotationGrisFactorCalculated}
+          </span>
+        </div>
+        <br />
+        <hr />
+        <h2> Parte 3 - Cálculo do gris e AdValoren</h2>
+        <hr />
+        <label type="text">
+          Preço de venda do SKU
+          <input
+            className={styles.card}
+            required={true}
+            type="number"
+            value={skuQuotationPrice}
+            onChange={(event) => {
+              if (!isNaN(parseFloat(event.target.value))) {
+                setSkuQuotationPrice(parseFloat(event.target.value));
+                setErrorMessage("");
+              } else {
+                setErrorMessage("O valor digitado não é um número válido.");
+              }
+            }}
+          />
+        </label>
+        <label type="text">
+          Constante do Gris
+          <input
+            className={styles.card}
+            required={true}
+            type="number"
+            value={skuQuotationRowGrisValue}
+            onChange={(event) => {
+              if (!isNaN(parseFloat(event.target.value))) {
+                setSkuQuotationRowGrisValue(parseFloat(event.target.value));
+                setErrorMessage("");
+              } else {
+                setErrorMessage("O valor digitado não é um número válido.");
+              }
+            }}
+          />
+        </label>
+        <label type="text">
+          Constante do AdValoren
+          <input
+            className={styles.card}
+            required={true}
+            type="number"
+            value={skuQuotationRowAdValorenValue}
+            onChange={(event) => {
+              if (!isNaN(parseFloat(event.target.value))) {
+                setSkuQuotationRowAdValorenValue(
+                  parseFloat(event.target.value)
+                );
+                setErrorMessage("");
+              } else {
+                setErrorMessage("O valor digitado não é um número válido.");
+              }
+            }}
+          />
+        </label>
+        <br />
+        <label type="text">
+          Valor da faixa de peso na tabela de frete:
+          <input
+            className={styles.card}
+            required={true}
+            type="number"
+            value={skuQuotationRowShhipingCost}
+            onChange={(event) => {
+              if (!isNaN(parseFloat(event.target.value))) {
+                setSkuQuotationRowShhipingCost(parseFloat(event.target.value));
+                setErrorMessage("");
+              } else {
+                setErrorMessage("O valor digitado não é um número válido.");
+              }
+            }}
+          />
+        </label>
+        <br />
+        <h3>Cálculo do Gris:</h3>
+        <span>
+          gris&adValuren = ({skuQuotationPrice} *({skuQuotationRowGrisValue} +{" "}
+          {skuQuotationRowAdValorenValue})) / 100 + (
+          {skuQuotationRowShhipingCost} + {skuQuotationGrisFactorCalculated});{" "}
+          <br />
+          gris&adValuren = {skuGrisCalculated}
+        </span>
+        <hr />
+        <h2>Parte 4 - ICMS</h2>
+        <hr />
+        <div>Aqui vai o cálculo da parte 4</div>
+        <hr />
+        <h2>Parte 5 - Cálculo Total</h2>
+        <hr />
+        <div>Aqui vai o cálculo da parte 5</div>
+        <hr />
+      </div>
       <button className={styles.card} onClick={calculosOne}>
-        Calcular Volume / Peso Cúbico
+        1 - Calcular Volume / Peso Cúbico
       </button>
       <button className={styles.card} onClick={calculosTwo}>
-        Calcular Gris e AdValuren
+        2 - Calcular Fator do Gris{" "}
       </button>
       <button className={styles.card} onClick={calculosThree}>
-        Calcular 3
+        3 - Calcular Gris e AdValuren
+      </button>
+      <button className={styles.card} onClick={calculosFour}>
+        4 - Calcular ICMS
+      </button>
+
+      <button className={styles.card} onClick={calculosFive}>
+        5 - Calcular Valor total
       </button>
       <br />
       <button className={styles.card} onClick={clean}>
