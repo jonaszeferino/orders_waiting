@@ -185,3 +185,64 @@
 .image {
   border-radius: 50%;
 }
+
+.button_green {
+  margin: 1rem;
+  padding: 1rem;
+  text-align: left;
+  color: #ffffff;
+  background-color: #0070f3;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  max-width: 500px;
+}
+
+.button_green:hover,
+.button_green:focus,
+.button_green:active {
+  color: #000000;
+  border-color: #000000;
+}
+
+.button_green h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+.button_green p {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.button_red {
+  margin: 1rem;
+  padding: 1rem;
+  text-align: left;
+  color: red;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  max-width: 500px;
+}
+
+.button_red:hover,
+.button_red:focus,
+.button_red:active {
+  color: #f61010;
+  border-color: #f10f0f;
+}
+
+.button_red h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+.button_red p {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}

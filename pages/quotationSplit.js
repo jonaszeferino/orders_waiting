@@ -35,7 +35,13 @@ const Quotation = () => {
   //erros state
   const [errorMessage, setErrorMessage] = useState("");
 
-  // funcões:
+  const [isCalculoOneExecuted, setIsCalculoOneExecuted] = useState(false);
+  const [isCalculoTwoExecuted, setIsCalculoTwoExecuted] = useState(false);
+  const [isCalculoThreeExecuted, setIsCalculoThreeExecuted] = useState(false);
+  const [isCalculoFourExecuted, setIsCalculoFourExecuted] = useState(false);
+  const [isCalculoFiveExecuted, setIsCalculoFiveExecuted] = useState(false);
+
+  // Funções de Cálculo Abaixo:
   // volume
   const calculosOne = () => {
     let volume =
@@ -57,6 +63,7 @@ const Quotation = () => {
 
     setSkuQuotationVolumeCalculeted(volume);
     setSkuQuotationBetter(better);
+    setIsCalculoOneExecuted(true);
 
     return;
   };
@@ -68,6 +75,7 @@ const Quotation = () => {
       skuQuotationOverweightFactor;
 
     setSkuQuotationGrisFactorCalculated(grisFactor);
+    setIsCalculoTwoExecuted(true);
 
     return;
   };
@@ -79,16 +87,19 @@ const Quotation = () => {
         100 +
       (skuQuotationRowShhipingCost + skuQuotationGrisFactorCalculated);
     setSkuGrisCalculated(grisCalculos);
+    setIsCalculoThreeExecuted(true);
 
     return;
   };
 
   const calculosFour = () => {
     // implementation for handling width calculation
+    setIsCalculoFourExecuted(true);
   };
 
   const calculosFive = () => {
     // implementation for handling width calculation
+    setIsCalculoFiveExecuted(true);
   };
 
   const clean = () => {
@@ -105,10 +116,16 @@ const Quotation = () => {
     setSkuQuotationRowAdValorenValue(0);
     setSkuQuotationRowShhipingCost(0);
     setErrorMessage(0);
-    serSkuQuotationDimensionFactor(0);
+    setSkuQuotationDimensionFactor(0);
     setSkuQuotationMaxWeight(0);
     setSkuQuotationOverweightFactor(0);
     setSkuQuotationGrisFactorCalculated(0);
+
+    setIsCalculoOneExecuted(false);
+    setIsCalculoTwoExecuted(false);
+    setIsCalculoThreeExecuted(false);
+    setIsCalculoFourExecuted(false);
+    setIsCalculoFiveExecuted(false);
   };
 
   return (
@@ -393,7 +410,12 @@ const Quotation = () => {
         <div>Aqui vai o cálculo da parte 5</div>
         <hr />
       </div>
-      <button className={styles.card} onClick={calculosOne}>
+      <button
+        className={`${styles.card} ${
+          isCalculoOneExecuted ? styles.button_red : styles.button_green
+        }`}
+        onClick={calculosOne}
+      >
         1 - Calcular Volume / Peso Cúbico
       </button>
       <button className={styles.card} onClick={calculosTwo}>
