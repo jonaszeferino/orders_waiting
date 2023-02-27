@@ -3,6 +3,7 @@ import styles from "../styles/Home.module.css";
 
 const Quotation = () => {
   //fundamentais para o primeiro calculo
+  const [skuQuotationSkuQty, setSkuQuotationSkuQty] = useState(1);
   const [skuQuotationWeight, setSkuQuotationWeight] = useState(0.5);
   const [skuQuotationHeight, setSkuQuotationHeight] = useState(290);
   const [skuQuotationWidth, setSkuQuotationWidth] = useState(380);
@@ -67,10 +68,19 @@ const Quotation = () => {
 
     return;
   };
-
+  // Cálculo do grisFactor
   const calculosTwo = () => {
+    let volumeWithoutFactor =
+      (skuQuotationHeight / 1000) *
+      (skuQuotationWidth / 1000) *
+      (skuQuotationLength / 1000) *
+      skuQuotationSkuQty;
+
+    // factor =
+    //   (row.dimensionalFactor * volume - row.maxWeight) * row.overweightFactor;
+
     let grisFactor =
-      (skuQuotationDimensionFactor * skuQuotationVolumeCalculeted -
+      (skuQuotationDimensionFactor * volumeWithoutFactor -
         skuQuotationMaxWeight) *
       skuQuotationOverweightFactor;
 
@@ -80,6 +90,7 @@ const Quotation = () => {
     return;
   };
 
+  // Cálculo do gris&AdValuren
   const calculosThree = () => {
     let grisCalculos =
       (skuQuotationPrice *
@@ -120,7 +131,6 @@ const Quotation = () => {
     setSkuQuotationMaxWeight(0);
     setSkuQuotationOverweightFactor(0);
     setSkuQuotationGrisFactorCalculated(0);
-
     setIsCalculoOneExecuted(false);
     setIsCalculoTwoExecuted(false);
     setIsCalculoThreeExecuted(false);
@@ -226,6 +236,24 @@ const Quotation = () => {
           onChange={(event) => {
             if (!isNaN(parseFloat(event.target.value))) {
               setSkuQuotationFactor(parseFloat(event.target.value));
+              setErrorMessage("");
+            } else {
+              setErrorMessage("O valor digitado não é um número válido.");
+            }
+          }}
+        />
+      </label>
+      <label type="text">
+        Quantidade de SKUs
+        <input
+          placeholder={"1"}
+          className={styles.card}
+          required={true}
+          type="number"
+          value={skuQuotationSkuQty}
+          onChange={(event) => {
+            if (!isNaN(parseFloat(event.target.value))) {
+              setSkuQuotationSkuQty(parseFloat(event.target.value));
               setErrorMessage("");
             } else {
               setErrorMessage("O valor digitado não é um número válido.");
@@ -418,17 +446,37 @@ const Quotation = () => {
       >
         1 - Calcular Volume / Peso Cúbico
       </button>
-      <button className={styles.card} onClick={calculosTwo}>
+      <button
+        className={`${styles.card} ${
+          isCalculoTwoExecuted ? styles.button_red : styles.button_green
+        }`}
+        onClick={calculosTwo}
+      >
         2 - Calcular Fator do Gris{" "}
       </button>
-      <button className={styles.card} onClick={calculosThree}>
+      <button
+        className={`${styles.card} ${
+          isCalculoThreeExecuted ? styles.button_red : styles.button_green
+        }`}
+        onClick={calculosThree}
+      >
         3 - Calcular Gris e AdValuren
       </button>
-      <button className={styles.card} onClick={calculosFour}>
+      <button
+        className={`${styles.card} ${
+          isCalculoFourExecuted ? styles.button_red : styles.button_green
+        }`}
+        onClick={calculosFour}
+      >
         4 - Calcular ICMS
       </button>
 
-      <button className={styles.card} onClick={calculosFive}>
+      <button
+        className={`${styles.card} ${
+          isCalculoFiveExecuted ? styles.button_red : styles.button_green
+        }`}
+        onClick={calculosFive}
+      >
         5 - Calcular Valor total
       </button>
       <br />

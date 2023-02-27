@@ -2,6 +2,7 @@ import { useState } from "react";
 import styles from "../styles/Home.module.css";
 import ErrorPage from "./error-page";
 import { format, differenceInDays } from "date-fns";
+import { CSVLink } from "react-csv";
 
 export default function Reservations() {
   let [reservationStock, setReservationStock] = useState([]);
@@ -55,8 +56,20 @@ export default function Reservations() {
         setIsLoading(false);
         console.log("teste" + error.message);
         setMessageError(error.message);
+        setReservationStock({
+          clientId: result.clientId,
+        });
       });
   };
+
+  const data = reservationStock.map((reserve) => [
+    reserve.clientId,
+    reserve.channelId,
+    reserve.locationId,
+    reserve.skuId,
+    reserve.orderId,
+    reserve.quantity,
+  ]);
 
   return (
     <div>
@@ -127,6 +140,19 @@ export default function Reservations() {
           })}
         </div>
       )}
+      <CSVLink
+        style={{
+          backgroundColor: "gray",
+          borderBlockColor: "black",
+          padding: "1rem",
+
+          borderRadius: "1rem",
+          borderBottomStyle: "groove",
+        }}
+        data={data}
+      >
+        Exportar para CSV
+      </CSVLink>
     </div>
   );
 }
