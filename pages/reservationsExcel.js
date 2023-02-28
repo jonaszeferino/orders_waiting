@@ -63,13 +63,29 @@ export default function Reservations() {
   };
 
   const data = reservationStock.map((reserve) => [
-    reserve.clientId,
-    reserve.channelId,
-    reserve.locationId,
-    reserve.skuId,
-    reserve.orderId,
-    reserve.quantity,
+    format(new Date(reserve.createdAt), "dd/MM/yyyy HH:mm:ss"),
+    reserve.clientId.replace(/"/g, ""),
+    reserve.channelId.replace(/"/g, ""),
+    reserve.locationId.replace(/"/g, ""),
+    reserve.skuId.replace(/"/g, ""),
+    reserve.orderId.replace(/"/g, ""),
+    reserve.quantity.toString().replace(/"/g, ""),
+    differenceInDays(new Date(), new Date(reserve.createdAt)),
   ]);
+
+  const currentDate = new Date();
+  const options = {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+  const formattedDate = currentDate
+    .toLocaleString("pt-BR", options)
+    .replace(/\//g, " ");
+  const dateFile = formattedDate.replace(/[/: ]/g, "_");
 
   return (
     <div>
@@ -145,11 +161,22 @@ export default function Reservations() {
           backgroundColor: "gray",
           borderBlockColor: "black",
           padding: "1rem",
-
           borderRadius: "1rem",
           borderBottomStyle: "groove",
         }}
         data={data}
+        headers={[
+          "DataPedido",
+          "Cliente",
+          "Chanal",
+          "Filial",
+          "Sku",
+          "Pedido",
+          "Quantidade",
+          "DiasParado",
+        ]}
+        separator={";"}
+        filename={`reservas_pendentes_${dateFile}`}
       >
         Exportar para CSV
       </CSVLink>
