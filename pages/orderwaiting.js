@@ -5,7 +5,7 @@ import React from "react";
 import ErrorPage from "./error-page";
 import styles from "../styles/Home.module.css";
 import { format, differenceInDays } from "date-fns";
-import Link from "next/link";
+import { CSVLink } from "react-csv";
 
 export default function orders() {
   let [orderStock, setOrderStock] = useState([]);
@@ -13,8 +13,8 @@ export default function orders() {
   let [orderLocation, setOrderLocationId] = useState();
   let [isError, setError] = useState(null);
   let [totalResults, setTotalResults] = useState();
-
   let [isLoading, setIsLoading] = useState(false);
+  let [dateFile, setDateFile] = useState(format(new Date(), "dd-MM-yyyy"));
 
   const apiCall = (event) => {
     const url = `https://production-order.omniplat.io/v1/clients/${orderUser}/fulfillments/locations/${orderLocation}/status/WAITING?page=1`;
@@ -167,6 +167,7 @@ export default function orders() {
         Total de Resultados:
         <strong> {totalResults}</strong>
       </span>
+      <br />
     </div>
   );
 }
