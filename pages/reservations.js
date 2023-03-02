@@ -62,6 +62,8 @@ export default function Reservations() {
       });
   };
 
+  console.log("reservationStock: ", reservationStock);
+
   const data = reservationStock.map((reserve) => [
     format(new Date(reserve.createdAt), "dd/MM/yyyy HH:mm:ss"),
     reserve.clientId.replace(/"/g, ""),
@@ -72,6 +74,8 @@ export default function Reservations() {
     reserve.quantity.toString().replace(/"/g, ""),
     differenceInDays(new Date(), new Date(reserve.createdAt)),
   ]);
+
+  console.log("csvOK:", data);
 
   const currentDate = new Date();
   const options = {
