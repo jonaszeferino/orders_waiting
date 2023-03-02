@@ -71,6 +71,7 @@ export default function orders() {
     orders.locationId,
     orders.channelId,
     orders.createdAt ? format(new Date(orders.createdAt), "dd/MM/yyyy") : "",
+    differenceInDays(new Date(), new Date(orders.createdAt)),
   ]);
 
   console.log("csv:", csvData2);
@@ -184,7 +185,7 @@ export default function orders() {
             borderBottomStyle: "groove",
           }}
           data={csvData2}
-          headers={["Pedido", "Filial", "Chanal", "DataPedido"]}
+          headers={["Pedido", "Filial", "Chanal", "DataPedido", "DiasParado"]}
           separator={";"}
           filename={`reservas_pendentes_${dateFile}`}
         >
