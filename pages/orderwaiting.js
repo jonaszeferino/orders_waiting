@@ -173,7 +173,7 @@ export default function orders() {
         <strong> {totalResults}</strong>
       </span>
       <br />
-      orders.orderId, orders.locationId, orders.channelId, orders.createdAt,
+
       {csvData2 && (
         <CSVLink
           style={{
