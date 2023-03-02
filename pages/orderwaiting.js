@@ -56,13 +56,24 @@ export default function orders() {
       })
       .then(
         (result) => (
-          setOrderStock(result),
+          console.log("result: " + result),
+          setOrderStock(result.data),
           setIsLoading(false),
           setTotalResults(result.total)
         )
       )
       .catch((error) => setError(true), setIsLoading(false));
   };
+  console.log("ordeStock:" + orderStock);
+  console.log("ordeStockData:" + orderStock.data);
+  const csvData2 = orderStock.map((orders) => [
+    orders.orderId,
+    orders.locationId,
+    orders.channelId,
+    orders.createdAt ? format(new Date(orders.createdAt), "dd/MM/yyyy") : "",
+  ]);
+
+  console.log("csv:", csvData2);
 
   return (
     <div>
@@ -101,65 +112,62 @@ export default function orders() {
         <ErrorPage message={`Verifique a grafia`}></ErrorPage>
       ) : (
         <ul>
-          {orderStock &&
-            orderStock.data &&
-            orderStock.data.length > 0 &&
-            orderStock.data.map((orders) => {
-              const isOutdated =
-                differenceInDays(new Date(), new Date(orders.createdAt)) > 5;
+          {orderStock.map((orders) => {
+            const isOutdated =
+              differenceInDays(new Date(), new Date(orders.createdAt)) > 5;
 
-              return (
-                <div className={styles.card} key={orders.orderId}>
-                  <span>
-                    Pedido: <strong> {orders.orderId}</strong>
+            return (
+              <div className={styles.card} key={orders.orderId}>
+                <span>
+                  Pedido: <strong> {orders.orderId}</strong>
+                </span>
+                <br />
+                <span>
+                  Dias Nesse Status:{" "}
+                  <strong>
+                    {" "}
+                    {differenceInDays(new Date(), new Date(orders.createdAt))}
+                  </strong>
+                </span>
+                {"  "}-{" "}
+                {isOutdated && (
+                  <span style={{ color: "red", font: "bold" }}>
+                    Pedido parado a mais de 5 dias
                   </span>
+                )}
+                <br />
+                <span>
+                  Data do Pedido:
+                  <strong>
+                    {orders.createdAt.length > 0
+                      ? format(new Date(orders.createdAt), " dd/MM/yyyy")
+                      : ""}
+                  </strong>
                   <br />
-                  <span>
-                    Dias Nesse Status:{" "}
-                    <strong>
-                      {" "}
-                      {differenceInDays(new Date(), new Date(orders.createdAt))}
-                    </strong>
-                  </span>
-                  {"  "}-{" "}
-                  {isOutdated && (
-                    <span style={{ color: "red", font: "bold" }}>
-                      Pedido parado a mais de 5 dias
-                    </span>
-                  )}
-                  <br />
-                  <span>
-                    Data do Pedido:
-                    <strong>
-                      {orders.createdAt.length > 0
-                        ? format(new Date(orders.createdAt), " dd/MM/yyyy")
-                        : ""}
-                    </strong>
-                    <br />
-                  </span>
-                  LocationId:{" "}
-                  <span>
-                    <strong> {orders.locationId}</strong>
-                  </span>
-                  <br />
-                  Canal:{" "}
-                  <span>
-                    <strong> {orders.channelId}</strong>
-                  </span>
-                  <br />
-                  <a
-                    href={`https://oms.chaordic.com.br/deliveries/${orders.orderId}?channel=${orders.channelId}&fid=F1`}
-                    as="a"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <strong>Link Do Pedido</strong>
-                  </a>
-                  <br />
-                  <br />
-                </div>
-              );
-            })}
+                </span>
+                LocationId:{" "}
+                <span>
+                  <strong> {orders.locationId}</strong>
+                </span>
+                <br />
+                Canal:{" "}
+                <span>
+                  <strong> {orders.channelId}</strong>
+                </span>
+                <br />
+                <a
+                  href={`https://oms.chaordic.com.br/deliveries/${orders.orderId}?channel=${orders.channelId}&fid=F1`}
+                  as="a"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <strong>Link Do Pedido</strong>
+                </a>
+                <br />
+                <br />
+              </div>
+            );
+          })}
         </ul>
       )}
 
@@ -167,6 +175,34 @@ export default function orders() {
         Total de Resultados:
         <strong> {totalResults}</strong>
       </span>
+      <br />
+      {csvData2 && (
+        <CSVLink
+          style={{
+            backgroundColor: "gray",
+            borderBlockColor: "black",
+            padding: "1rem",
+            borderRadius: "1rem",
+            borderBottomStyle: "groove",
+          }}
+          data={csvData2}
+          headers={[
+            "DataPedido",
+            "Cliente",
+            "Chanal",
+            "Filial",
+            "Sku",
+            "Pedido",
+            "Quantidade",
+            "DiasParado",
+          ]}
+          separator={";"}
+          filename={`reservas_pendentes_${dateFile}`}
+        >
+          Exportar para CSV
+        </CSVLink>
+      )}
+
       <br />
     </div>
   );
