@@ -105,9 +105,7 @@ export default function orders() {
           Verificar
         </button>
       </h2>
-
       <span>{isLoading ? <div>Carregando...</div> : " "}</span>
-
       {isError === true ? (
         <ErrorPage message={`Verifique a grafia`}></ErrorPage>
       ) : (
@@ -170,12 +168,12 @@ export default function orders() {
           })}
         </ul>
       )}
-
       <span>
         Total de Resultados:
         <strong> {totalResults}</strong>
       </span>
       <br />
+      orders.orderId, orders.locationId, orders.channelId, orders.createdAt,
       {csvData2 && (
         <CSVLink
           style={{
@@ -186,23 +184,13 @@ export default function orders() {
             borderBottomStyle: "groove",
           }}
           data={csvData2}
-          headers={[
-            "DataPedido",
-            "Cliente",
-            "Chanal",
-            "Filial",
-            "Sku",
-            "Pedido",
-            "Quantidade",
-            "DiasParado",
-          ]}
+          headers={["Pedido", "Filial", "Chanal", "DataPedido"]}
           separator={";"}
           filename={`reservas_pendentes_${dateFile}`}
         >
           Exportar para CSV
         </CSVLink>
       )}
-
       <br />
     </div>
   );
