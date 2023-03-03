@@ -14,10 +14,12 @@ export default function orders() {
   let [isError, setError] = useState(null);
   let [totalResults, setTotalResults] = useState();
   let [isLoading, setIsLoading] = useState(false);
-  let [dateFile, setDateFile] = useState(format(new Date(), "dd-MM-yyyy"));
+  let [dateFile, setDateFile] = useState(
+    format(new Date(), "dd_MM_yyyy_HH_mm_ss")
+  );
 
   const apiCall = (event) => {
-    const url = `https://production-order.omniplat.io/v1/clients/${orderUser}/fulfillments/locations/${orderLocation}/status/WAITING?page=1`;
+    const url = `https://production-order.omniplat.io/v1/clients/${orderUser}/fulfillments/locations/${orderLocation}/status/WAITING?pageSize=50`;
     let authorizationValue;
     setIsLoading(true);
 
@@ -49,6 +51,7 @@ export default function orders() {
       .then((response) => {
         if (response.status === 200) {
           setError(false);
+
           return response.json();
         } else {
           throw new Error("Dados Incorretos");
@@ -57,6 +60,7 @@ export default function orders() {
       .then(
         (result) => (
           console.log("result: " + result),
+          setIsLoading(false),
           setOrderStock(result.data),
           setIsLoading(false),
           setTotalResults(result.total)
@@ -66,20 +70,23 @@ export default function orders() {
   };
   console.log("ordeStock:" + orderStock);
   console.log("ordeStockData:" + orderStock.data);
-  const csvData2 = orderStock.map((orders) => [
+  const csvData = orderStock.map((orders) => [
     orders.orderId,
     orders.locationId,
     orders.channelId,
-    orders.createdAt ? format(new Date(orders.createdAt), "dd/MM/yyyy") : "",
+    orders.createdAt
+      ? format(new Date(orders.createdAt), "dd/MM/yyyy HH:mm:ss")
+      : "",
     differenceInDays(new Date(), new Date(orders.createdAt)),
   ]);
 
-  console.log("csv:", csvData2);
+  console.log("csv:", csvData);
 
   return (
     <div>
       <h3 className={styles.title}>Pedidos Waiting</h3>
-      <h2 className={styles.grid}>
+      <span>**com alerta para os parados a mais de 5 dias**</span>
+      <h2>
         <br />
         <label type="text">
           Client:
@@ -110,72 +117,43 @@ export default function orders() {
       {isError === true ? (
         <ErrorPage message={`Verifique a grafia`}></ErrorPage>
       ) : (
-        <ul>
-          {orderStock.map((orders) => {
+        <div className={styles.grid}>
+          {orderStock.map((reserve) => {
             const isOutdated =
-              differenceInDays(new Date(), new Date(orders.createdAt)) > 5;
-
+              differenceInDays(new Date(), new Date(reserve.createdAt)) > 5;
             return (
-              <div className={styles.card} key={orders.orderId}>
+              <div className={styles.card} key={reserve.orderId}>
+                <span>Pedido: {reserve.orderId}</span> <br />
+                <span>Canal: {reserve.channelId}</span> <br />
+                <span>Location: {reserve.locationId}</span> <br />
                 <span>
-                  Pedido: <strong> {orders.orderId}</strong>
+                  Data do Pedido:{" "}
+                  {format(new Date(reserve.createdAt), "dd/MM/yyyy HH:mm:ss")}
                 </span>
                 <br />
                 <span>
                   Dias Nesse Status:{" "}
                   <strong>
                     {" "}
-                    {differenceInDays(new Date(), new Date(orders.createdAt))}
+                    {differenceInDays(new Date(), new Date(reserve.createdAt))}
                   </strong>
                 </span>
-                {"  "}-{" "}
+                {"  "}-
                 {isOutdated && (
                   <span style={{ color: "red", font: "bold" }}>
-                    Pedido parado a mais de 5 dias
+                    {`Pedido nesse status ${differenceInDays(
+                      new Date(),
+                      new Date(reserve.createdAt)
+                    )} dias`}
                   </span>
                 )}
-                <br />
-                <span>
-                  Data do Pedido:
-                  <strong>
-                    {orders.createdAt.length > 0
-                      ? format(new Date(orders.createdAt), " dd/MM/yyyy")
-                      : ""}
-                  </strong>
-                  <br />
-                </span>
-                LocationId:{" "}
-                <span>
-                  <strong> {orders.locationId}</strong>
-                </span>
-                <br />
-                Canal:{" "}
-                <span>
-                  <strong> {orders.channelId}</strong>
-                </span>
-                <br />
-                <a
-                  href={`https://oms.chaordic.com.br/deliveries/${orders.orderId}?channel=${orders.channelId}&fid=F1`}
-                  as="a"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <strong>Link Do Pedido</strong>
-                </a>
-                <br />
                 <br />
               </div>
             );
           })}
-        </ul>
+        </div>
       )}
-      <span>
-        Total de Resultados:
-        <strong> {totalResults}</strong>
-      </span>
-      <br />
-
-      {csvData2 && (
+      {csvData && (
         <CSVLink
           style={{
             backgroundColor: "gray",
@@ -184,15 +162,14 @@ export default function orders() {
             borderRadius: "1rem",
             borderBottomStyle: "groove",
           }}
-          data={csvData2}
-          headers={["Pedido", "Filial", "Chanal", "DataPedido", "DiasParado"]}
+          data={csvData}
+          headers={["Pedido", "Filial", "Canal", "DataPedido", "DiasParado"]}
           separator={";"}
-          filename={`reservas_pendentes_${dateFile}`}
+          filename={`pedidos_waiting_${orderUser}_${dateFile}`}
         >
           Exportar para CSV
         </CSVLink>
       )}
-      <br />
     </div>
   );
 }

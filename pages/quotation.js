@@ -140,13 +140,14 @@ const Quotation = () => {
 
   return (
     <div>
+      <h1 style={{ color: "red" }}>⚠️ Under Constrution ⚠️</h1>
       <h3>
         Demonstração dos Cálculos da Cotação no OMS - Divido em 5 Partes -
       </h3>
       <h4>
         {" "}
         1 Cálculo do Volume / 2 Cálculo do grisFactor / 3 Cálculo do
-        grisAdValoren / 4 IMCS / 5 Cálculo Total{" "}
+        grisAdValoren / 4 ICMS / 5 Cálculo Total{" "}
       </h4>
       <hr />
       <h2>Parte 1 - Cálculo do Volume</h2>
@@ -171,7 +172,7 @@ const Quotation = () => {
         />
       </label>
       <label type="text">
-        Altura em cm
+        Altura em mm
         <input
           placeholder={"10"}
           className={styles.card}
@@ -189,7 +190,7 @@ const Quotation = () => {
         />
       </label>
       <label type="text">
-        Largura em cm
+        Largura em mm
         <input
           placeholder={"20"}
           className={styles.card}
@@ -207,7 +208,7 @@ const Quotation = () => {
         />
       </label>
       <label type="text">
-        Profundidade em cm
+        Profundidade em mm
         <input
           placeholder={"20"}
           className={styles.card}

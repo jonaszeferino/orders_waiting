@@ -15,7 +15,7 @@ export default function Reservations() {
   let [isLoading, setIsLoading] = useState(false);
 
   const apiCall = (event) => {
-    const url = `https://hub.omniplat.io/v1/clients/${reservationUser}/reservations/unfinished`;
+    const url = `https://hub.omniplat.io/v1/clients/${reservationUser}/reservations/unfinished?pageSize=50`;
     let authorizationValue;
     setIsLoading(true);
 
@@ -55,13 +55,13 @@ export default function Reservations() {
         setError(true);
         setIsLoading(false);
         console.log("teste" + error.message);
-        setMessageError(error.message);
-        setReservationStock({
-          clientId: result.clientId,
-        });
+        setMessageError("Ocorreu um erro ao buscar as reservas.");
+        setReservationStock([]);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
-
   console.log("reservationStock: ", reservationStock);
 
   const data = reservationStock.map((reserve) => [
@@ -94,6 +94,7 @@ export default function Reservations() {
   return (
     <div>
       <h3 className={styles.title}>Reservas Não Finalizadas</h3>
+      <span>**Com alerta para reservas pendentes a mais de 10 dias**</span>
       <h2 className={styles.grid}>
         {" "}
         <br />
